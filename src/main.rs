@@ -15,12 +15,41 @@ use wry::WebViewBuilder;
 
 fn main() -> Result<()> {
     let docker_compose_yaml = r#"
-version: '3'
-services:
-  web:
-    image: nginx
-    ports:
-      - "3000:80"
+    version: '3.6'
+
+    services:
+      ollama:
+        volumes:
+          - ollama:/root/.ollama
+        container_name: ollama
+        pull_policy: always
+        tty: true
+        restart: unless-stopped
+        image: ollama/ollama:latest
+    
+      ollama-webui:
+        build:
+          context: .
+          args:
+            OLLAMA_API_BASE_URL: '/ollama/api'
+          dockerfile: Dockerfile
+        image: ollama-webui:latest
+        container_name: ollama-webui
+        volumes:
+          - ollama-webui:/app/backend/data
+        depends_on:
+          - ollama
+        ports:
+          - 3000:8080
+        environment:
+          - "OLLAMA_API_BASE_URL=http://ollama:11434/api"
+        extra_hosts:
+          - host.docker.internal:host-gateway
+        restart: unless-stopped
+    
+    volumes:
+      ollama: {}
+      ollama-webui: {}
 "#;
 
     // Create and write to a temporary Docker Compose file
