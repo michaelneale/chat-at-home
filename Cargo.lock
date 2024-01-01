@@ -3485,7 +3485,6 @@ dependencies = [
  "parking_lot",
  "png",
  "raw-window-handle 0.5.2",
- "raw-window-handle 0.6.0",
  "scopeguard",
  "tao-macros",
  "unicode-segmentation",

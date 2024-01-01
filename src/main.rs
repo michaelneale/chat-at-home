@@ -11,6 +11,7 @@ use tao::{
 };
 use tempfile::NamedTempFile;
 use wry::Result;
+use wry::WebViewBuilder;
 
 fn main() -> Result<()> {
     let docker_compose_yaml = r#"
@@ -88,8 +89,8 @@ services:
     target_os = "ios",
     target_os = "android"
 ))]
-fn setup_webview_builder(window: &tao::window::Window) -> wry::WebViewBuilder {
-    wry::WebViewBuilder::new(window)
+fn setup_webview_builder(window: &tao::window::Window) -> WebViewBuilder {
+    WebViewBuilder::new(window)
 }
 
 #[cfg(not(any(
@@ -98,9 +99,9 @@ fn setup_webview_builder(window: &tao::window::Window) -> wry::WebViewBuilder {
     target_os = "ios",
     target_os = "android"
 )))]
-fn setup_webview_builder(window: &tao::window::Window) -> wry::WebViewBuilder {
+fn setup_webview_builder(window: &tao::window::Window) -> WebViewBuilder {
     use tao::platform::unix::WindowExtUnix;
     use wry::WebViewBuilderExtUnix;
     let vbox = window.default_vbox().unwrap();
-    wry::WebViewBuilder::new_gtk(vbox)
+    WebViewBuilder::new_gtk(vbox)
 }
