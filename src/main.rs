@@ -13,6 +13,8 @@ use tempfile::NamedTempFile;
 use wry::Result;
 use wry::WebViewBuilder;
 
+
+
 fn main() -> Result<()> {
     let docker_compose_yaml = r#"
     version: '3.6'
@@ -63,23 +65,19 @@ fn main() -> Result<()> {
         .spawn()
         .expect("Failed to start docker-compose");
 
-    // Polling to check if the server is up
-    let client = reqwest::blocking::Client::new();
     let mut retries = 0;
     let max_retries = 10;
     let retry_interval = Duration::from_secs(3);
     while retries < max_retries {
-        if let Ok(response) = client.get("http://localhost:3000").send() {
-            if response.status().is_success() {
-                break;
-            }
+        if is_container_running("ollama") && is_container_running("ollama-webui") {
+            break;
         }
         retries += 1;
         thread::sleep(retry_interval);
     }
     if retries >= max_retries {
-        panic!("Failed to connect to the server");
-    }        
+        panic!("Failed to start one or more containers");
+    }      
 
     // Setup Tauri application
     let event_loop = EventLoop::new();
@@ -133,4 +131,16 @@ fn setup_webview_builder(window: &tao::window::Window) -> WebViewBuilder {
     use wry::WebViewBuilderExtUnix;
     let vbox = window.default_vbox().unwrap();
     WebViewBuilder::new_gtk(vbox)
+}
+
+
+// Function to check if a Docker container is running
+fn is_container_running(container_name: &str) -> bool {
+    let output = Command::new("docker")
+        .args(&["ps", "--filter", &format!("name={}", container_name)])
+        .output()
+        .expect("Failed to execute docker command");
+
+    let output_str = String::from_utf8_lossy(&output.stdout);
+    output_str.contains(container_name)
 }
