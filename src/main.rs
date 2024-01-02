@@ -3,7 +3,7 @@ use std::io::Write;
 use reqwest;
 use std::thread;
 use std::time::Duration;
-use std::process::{Command, Child};
+use std::process::{Command, Child, Stdio};
 use tao::{
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
@@ -79,14 +79,30 @@ fn main() -> Result<()> {
         panic!("Failed to start one or more containers");
     }      
 
-    // Setup Tauri application
+    let model = "orca-mini";
+    // prime the api server with the codellama image
+    let mut modelPull = Command::new("docker")
+        .arg("exec")
+        .arg("ollama")
+        .arg("ollama")
+        .arg("pull")
+        .arg(model)
+        .stdout(Stdio::inherit()) // Stream the output to stdout
+        .spawn()
+        .expect("Failed to execute command");
+
+    if !modelPull.wait().expect("Failed to wait on docker exec process").success() {
+        panic!("Failed to pull model {}", model);        
+    }        
+
+    // Setup Tauri application window with WebView from wry
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new().build(&event_loop).unwrap();
 
     let builder = setup_webview_builder(&window);
     let _webview = builder.with_url("http://localhost:3000")?.build()?;
 
-    // Run the event loop
+    // App has exited, so now cleanup
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Wait;
 
