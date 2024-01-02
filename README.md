@@ -21,3 +21,6 @@ This is my first rust project, be kind.
 `cargo build`
 
 Uses `wry` for the webview, and `tao` for x-platform windowing. Ollama (https://github.com/jmorganca/ollama) for model hosting and Ollama chat gui for the actual GUI (https://github.com/ollama-webui/ollama-webui). Docker compose as well. 
+
+
+![Screenshot of GUI](./shot.png)
