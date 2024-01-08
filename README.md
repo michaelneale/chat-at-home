@@ -1,5 +1,7 @@
 # Run Ollama Chat type GUI as desktop app
 
+"why do something with a shell script you can do with a rust app"
+
 "Mom can we have ChatGPT" "No, we have chatgpt at home". 
 
 ChatGPT at home:
