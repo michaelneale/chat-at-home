@@ -1,9 +1,9 @@
-use std::fs::File;
+
 use std::io::Write;
-use reqwest;
+
 use std::thread;
 use std::time::Duration;
-use std::process::{Command, Child, Stdio};
+use std::process::{Command, Stdio};
 use tao::{
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
@@ -81,7 +81,7 @@ fn main() -> Result<()> {
 
     let model = "orca-mini";
     // prime the api server with the codellama image
-    let mut modelPull = Command::new("docker")
+    let mut model_pull = Command::new("docker")
         .arg("exec")
         .arg("ollama")
         .arg("ollama")
@@ -91,7 +91,7 @@ fn main() -> Result<()> {
         .spawn()
         .expect("Failed to execute command");
 
-    if !modelPull.wait().expect("Failed to wait on docker exec process").success() {
+    if !model_pull.wait().expect("Failed to wait on docker exec process").success() {
         panic!("Failed to pull model {}", model);        
     }        
 
