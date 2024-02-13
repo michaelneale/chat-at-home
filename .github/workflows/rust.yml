@@ -22,7 +22,9 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libgtk-3-dev libgdk-pixbuf2.0-dev libglib2.0-dev libcairo2-dev libpango1.0-dev pkg-config
-        sudo apt-get install -y libsoup3.0-dev # This installs libsoup 3.0 development files
+        # Correct package name for libsoup3 development files
+        sudo apt-get install -y libsoup3-dev
+
 
     - name: Build
       run: cargo build --verbose
